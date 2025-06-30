@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Expense Tracker Application
 
 ## Overview
@@ -54,3 +55,7 @@ Feel free to submit issues or pull requests to improve the application. Your con
 
 ## License
 This project is licensed under the MIT License.
+=======
+# expense-tracker-app
+A front end HTML based expense tracker application.
+>>>>>>> 5fba0e63d3f1937ad7ade576c1401798e3cf07a3
