@@ -35,20 +35,9 @@ beforeEach(() => {
 });
 
 describe('Expense Tracker App', () => {
-    let originalTransactions;
-
     beforeEach(() => {
-        // Re-require app.js to reset state
-        jest.resetModules();
-        // Save original transactions array reference
-        originalTransactions = app.transactions;
-        // Clear transactions for each test
+        // Clear the transactions array for each test
         app.transactions.length = 0;
-    });
-
-    afterEach(() => {
-        // Restore transactions array
-        app.transactions = originalTransactions;
     });
 
     test('addTransaction adds a transaction and updates totals', () => {

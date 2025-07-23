@@ -50,6 +50,7 @@ document.getElementById('addTransaction').addEventListener('click', function() {
 
     if (description && !isNaN(amount) && amount > 0 && date) {
         addTransaction(description, amount, type, date);
+        renderChart(); // Update chart after adding transaction
 
         // Clear form fields
         document.getElementById('description').value = '';
@@ -62,7 +63,11 @@ document.getElementById('addTransaction').addEventListener('click', function() {
 });
 
 function renderChart() {
-    const ctx = document.getElementById('expenseChart').getContext('2d');
+    const canvas = document.getElementById('expenseChart');
+    if (!canvas) return;
+    
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return; // Handle case where getContext is not available (e.g., in tests)
 
     const income = transactions
         .filter(transaction => transaction.type === 'income')
@@ -77,43 +82,40 @@ function renderChart() {
         chartInstance.destroy();
     }
 
-    chartInstance = new Chart(ctx, {
-        type: 'pie',
-        data: {
-            labels: ['Income', 'Expenses'],
-            datasets: [{
-                data: [income, expenses],
-                backgroundColor: ['#d4edda', '#f8d7da'],
-                borderColor: ['#155724', '#721c24'],
-                borderWidth: 1
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: {
-                    display: true,
-                    position: 'bottom'
-                },
-                tooltip: {
-                    callbacks: {
-                        label: function(context) {
-                            return `${context.label}: ₹${context.raw.toFixed(2)}`;
+    // Only create chart if Chart constructor is available
+    if (typeof Chart !== 'undefined') {
+        chartInstance = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: ['Income', 'Expenses'],
+                datasets: [{
+                    data: [income, expenses],
+                    backgroundColor: ['#d4edda', '#f8d7da'],
+                    borderColor: ['#155724', '#721c24'],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'bottom'
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return `${context.label}: ₹${context.raw.toFixed(2)}`;
+                            }
                         }
                     }
                 }
             }
-        }
-    });
+        });
+    }
 }
 
 function initApp() {
-    const addBtn = document.getElementById('addTransaction');
-    if (addBtn) {
-        addBtn.addEventListener('click', function() {
-            renderChart();
-        });
-    }
     renderChart();
     updateTotals();
 }
@@ -124,12 +126,14 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
 }
 
 // Export everything needed for tests
-module.exports = {
-    renderChart,
-    updateTotals,
-    displayTransactions,
-    addTransaction,
-    initApp,
-    // export transactions array if needed
-    transactions: [],
-};
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = {
+        renderChart,
+        updateTotals,
+        displayTransactions,
+        addTransaction,
+        initApp,
+        // export the actual transactions array, not a new empty one
+        get transactions() { return transactions; }
+    };
+}
