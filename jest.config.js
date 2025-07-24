@@ -5,5 +5,6 @@ module.exports = {
   ],
   moduleFileExtensions: ["js", "json"],
   transform: {},
-  verbose: true
+  verbose: true,
+  setupFilesAfterEnv: ['<rootDir>/jest.setup.js']
 };
